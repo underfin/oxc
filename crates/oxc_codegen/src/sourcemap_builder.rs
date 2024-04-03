@@ -66,11 +66,10 @@ impl SourcemapBuilder {
 
     pub fn add_source_mapping_for_name(&mut self, output: &[u8], span: Span, name: &str) {
         // SAFETY: search original string by span.
-        let original_name =
-            unsafe { self.original_source.get_unchecked(span.start as usize..span.end as usize) };
+        let original_name = self.original_source.get(span.start as usize..span.end as usize);
         // The token name should be original name.
         // If it hasn't change, name should be `None` to reduce `SourceMap` size.
-        let token_name = if original_name == name { None } else { Some(original_name.into()) };
+        let token_name = if original_name == Some(name) { None } else { Some(name.into()) };
         self.add_source_mapping(output, span.start, token_name);
     }
 
