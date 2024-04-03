@@ -65,6 +65,7 @@ impl SourcemapBuilder {
     }
 
     pub fn add_source_mapping_for_name(&mut self, output: &[u8], span: Span, name: &str) {
+        println!("add_source_mapping_for_name: {:?} {:?}", self.original_source.len(), span);
         // SAFETY: search original string by span.
         let original_name =
             unsafe { self.original_source.get_unchecked(span.start as usize..span.end as usize) };
