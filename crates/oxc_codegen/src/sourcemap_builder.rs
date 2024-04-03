@@ -25,6 +25,7 @@ pub struct LineOffsetTable {
 pub struct SourcemapBuilder {
     enable_sourcemap: bool,
     source_id: u32,
+    name: Arc<str>,
     original_source: Arc<str>,
     last_generated_update: usize,
     last_position: Option<u32>,
@@ -40,6 +41,7 @@ impl Default for SourcemapBuilder {
         Self {
             enable_sourcemap: false,
             source_id: 0,
+            name: "".into(),
             original_source: "".into(),
             last_generated_update: 0,
             last_position: None,
@@ -58,6 +60,7 @@ impl SourcemapBuilder {
         self.line_offset_tables = Self::generate_line_offset_tables(source);
         self.source_id = self.sourcemap_builder.set_source_and_content(name, source);
         self.original_source = source.into();
+        self.name = name.into();
     }
 
     pub fn into_sourcemap(self) -> Option<oxc_sourcemap::SourceMap> {
@@ -65,7 +68,7 @@ impl SourcemapBuilder {
     }
 
     pub fn add_source_mapping_for_name(&mut self, output: &[u8], span: Span, name: &str) {
-        println!("add_source_mapping_for_name: {:?} {:?}", self.original_source.len(), span);
+        println!("add_source_mapping_for_name: {:?} {:?} {:?}", self.original_source.len(), self.name, span);
         // SAFETY: search original string by span.
         let original_name =
             unsafe { self.original_source.get_unchecked(span.start as usize..span.end as usize) };
